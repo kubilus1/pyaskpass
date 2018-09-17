@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+
+import time
+import pyglet
+from pyglet.window import key
+
+class ask_pass(pyglet.window.Window):
+
+    SECRET=[]
+
+    def __init__(self, *args, **kwargs):
+        super(ask_pass, self).__init__(400, 140, caption='Password Required')
+        self.batch = pyglet.graphics.Batch()
+        self.label = pyglet.text.Label('Please Enter Password:', 
+                    font_name='Times New Roman', 
+                    font_size=24,
+                    x=self.width//2, y=100,
+                    anchor_x='center', anchor_y='center',
+                    batch=self.batch)
+        self.label2 = pyglet.text.Label('', 
+                    font_name='Times New Roman', 
+                    font_size=24,
+                    x=self.width//2, y=40,
+                    anchor_x='center', anchor_y='center',
+                    batch=self.batch)
+
+    def on_key_press(self, symbol, modifiers):
+        upper = False
+        if modifiers & key.MOD_CAPSLOCK & key.MOD_SHIFT:
+            upper = False
+        elif modifiers & key.MOD_CAPSLOCK:
+            upper = True
+        elif modifiers & key.MOD_SHIFT:
+            upper = True
+        else:
+            upper = False
+
+        if 0 <= symbol <= 255:
+            char = chr(symbol)
+            if upper and 97 <= symbol <= 122:
+                char = char.upper()
+            self.SECRET.append(char)
+        elif symbol == key.ENTER:
+            print("".join(self.SECRET))
+            pyglet.app.exit()
+        elif symbol == key.BACKSPACE:
+            self.SECRET.pop()
+
+        self.label2.text = '*' * len(self.SECRET)
+
+    def on_draw(self):
+        self.clear()
+        self.label.draw()
+        self.label2.draw()
+
+w = ask_pass(resizeable=False)
+pyglet.app.run()
